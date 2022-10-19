@@ -2,20 +2,27 @@ import ajv, { ErrorObject, Options, Schema, ValidateFunction } from 'ajv';
 
 
 const DEFAULT_OPTIONS = { 
-        removeAdditional: true 
-    };
+    removeAdditional: true 
+};
 
 
 class Validator {
-    validator: ValidateFunction;
+    options: Options;
+    schema: Schema;
+    validator?: ValidateFunction;
 
 
     constructor(JSONSchema: Schema, options: Options) {
-        this.validator = new ajv(options).compile(JSONSchema);
+        this.options = options;
+        this.schema = JSONSchema;
     }
 
 
     validate(data: { [key: string]: any }): ErrorObject[] {
+        if (!this.validator) {
+            this.validator = new ajv(this.options).compile(this.schema);
+        }
+
         this.validator(data);
 
         return this.validator.errors || [];
