@@ -1,6 +1,5 @@
 {
     "author": "ICJR",
-    "dependencies": {},
     "description": "Data Validation Utility",
     "devDependencies": {
         "ajv": "^8.11.0",

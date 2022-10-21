@@ -1,4 +1,5 @@
-import ajv, { ErrorObject, Options, Schema, ValidateFunction } from 'ajv';
+import ajv, { Options, Schema, ValidateFunction } from 'ajv';
+import { Response } from './types';
 
 
 const DEFAULT_OPTIONS = {
@@ -18,23 +19,24 @@ class Validator {
     }
 
 
-    validate(data: { [key: string]: any }): {
-        errors: ErrorObject[],
-        info: string[],
-        success: string[],
-        warning: string[]
-    } {
+    validate(data: { [key: string]: any }): Response {
         if (!this.validator) {
             this.validator = new ajv(this.options).compile(this.schema);
         }
 
         this.validator(data);
 
+        let errors = this.validator.errors || [];
+
         return {
-            errors: this.validator.errors || [],
-            info: [],
-            success: [],
-            warning: []
+            data,
+            messages: {
+                errors,
+                info: [],
+                success: [],
+                warning: []
+            },
+            success: errors.length === 0
         };
     }
 }
