@@ -1,8 +1,8 @@
 import ajv, { ErrorObject, Options, Schema, ValidateFunction } from 'ajv';
 
 
-const DEFAULT_OPTIONS = { 
-    removeAdditional: true 
+const DEFAULT_OPTIONS = {
+    removeAdditional: true
 };
 
 
@@ -18,14 +18,24 @@ class Validator {
     }
 
 
-    validate(data: { [key: string]: any }): ErrorObject[] {
+    validate(data: { [key: string]: any }): {
+        errors: ErrorObject[],
+        info: string[],
+        success: string[],
+        warning: string[]
+    } {
         if (!this.validator) {
             this.validator = new ajv(this.options).compile(this.schema);
         }
 
         this.validator(data);
 
-        return this.validator.errors || [];
+        return {
+            errors: this.validator.errors || [],
+            info: [],
+            success: [],
+            warning: []
+        };
     }
 }
 
