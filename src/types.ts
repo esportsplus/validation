@@ -2,7 +2,7 @@ import { ErrorObject } from 'ajv';
 
 
 type Response = {
-    data: { [key: string]: any };
+    data: Record<string, any>;
     messages: {
         errors: ErrorObject[];
         info: string[];
