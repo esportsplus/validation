@@ -1,6 +1,6 @@
 {
     "author": "ICJR",
-    "description": "Data Validation Utility",
+    "description": "Data validation utility",
     "devDependencies": {
         "ajv": "^8.11.0",
         "glob": "^8.0.3",
