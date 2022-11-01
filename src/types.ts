@@ -1,16 +1,26 @@
-import { ErrorObject } from 'ajv';
+import { ArrayType } from "./array";
+import { BooleanType } from "./boolean";
+import { NumberType } from "./number";
+import { ObjectType } from "./object";
+import { StringType } from "./string";
 
 
-type Response = {
-    data: Record<string, any>;
-    messages: {
-        errors: ErrorObject[];
-        info: string[];
-        success: string[];
-        warning: string[];
-    };
-    success: boolean;
+enum Variables {
+    errors = 'errors',
+    input = '_'
 };
 
 
-export { Response };
+type ErrorMessage = unknown;
+
+type Property = number | string | { dynamic: string };
+
+type PrimitiveTypes = ArrayType | BooleanType | NumberType | ObjectType | StringType;
+
+type Validator = (data: unknown) => {
+    data: unknown;
+    errors: string[];
+};
+
+
+export { ErrorMessage, Property, PrimitiveTypes, Validator, Variables };
