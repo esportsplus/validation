@@ -1,6 +1,6 @@
 {
     "author": "ICJR",
-    "description": "Primitive validation utility",
+    "description": "Data validation utility",
     "devDependencies": {
         "typescript": "^4.8.4"
     },
