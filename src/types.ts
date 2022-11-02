@@ -22,7 +22,7 @@ type Validator = (data: unknown) => {
     // Validation errors
     errors: { message: string, path: (string | number)[] }[];
     // Messages displayed on UI
-    messages?: {
+    messages: {
         errors?: string[];
         info?: string[];
         warning?: string[];
