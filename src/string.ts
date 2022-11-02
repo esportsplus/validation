@@ -16,12 +16,12 @@ class StringType {
         let [code, variable] = factory.init(obj, property);
 
         if (this.config.optional) {
-            code += `if (${variable} !== undefined && ${variable} !== '') {`;
+            code += `if (${variable} !== undefined) {`;
         }
 
             code += `
-                if (typeof ${variable} !== 'string' || ${variable} === '') {
-                    ${factory.error(variable, `must be a non empty string`)}
+                if (typeof ${variable} !== 'string' ${this.config.optional ? '' : `|| ${variable} === ''` }) {
+                    ${factory.error(variable, this.config.optional ? `must be a string` : 'must be a non empty string')}
                 }
             `;
 
