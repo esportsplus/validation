@@ -42,7 +42,7 @@ const validator = (type: PrimitiveTypes): Validator => {
 
         ${type.compile(Variables['input'])}
 
-        return { data: ${Variables['input']}, errors };
+        return { data: ${Variables['input']}, messages: { errors } };
     `) as Validator;
 };
 

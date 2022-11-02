@@ -19,7 +19,15 @@ type Property = number | string | { dynamic: string };
 
 type Validator = (data: unknown) => {
     data: unknown;
-    errors: string[];
+    // Validation errors
+    errors: { message: string, path: (string | number)[] }[];
+    // Messages displayed on UI
+    messages?: {
+        errors?: string[];
+        info?: string[];
+        warning?: string[];
+        success?: string[];
+    };
 };
 
 
