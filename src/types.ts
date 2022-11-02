@@ -17,8 +17,8 @@ type PrimitiveTypes = ArrayType | BooleanType | NumberType | ObjectType | String
 
 type Property = number | string | { dynamic: string };
 
-type Validator = (data: unknown) => {
-    data: unknown;
+type Validator = <T>(data: T) => {
+    data: T;
     // Validation errors
     errors: { message: string, path: (string | number)[] }[];
     // Messages displayed on UI
