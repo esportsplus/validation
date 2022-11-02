@@ -9,6 +9,7 @@ class StringType {
         optional?: boolean;
     } = {};
     errors: Record<string, ErrorMessage> = {};
+    type: string = '';
     #validator?: Validator;
 
 
