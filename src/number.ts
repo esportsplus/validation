@@ -10,7 +10,6 @@ class NumberType {
         type: string
     };
     errors: Record<string, ErrorMessage> = {};
-    type: number = 0;
     #validator?: Validator;
 
 

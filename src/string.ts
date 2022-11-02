@@ -7,9 +7,8 @@ class StringType {
         max?: number;
         min?: number;
         optional?: boolean;
-    } = {};
+    } = { };
     errors: Record<string, ErrorMessage> = {};
-    type: string = '';
     #validator?: Validator;
 
 

@@ -5,8 +5,7 @@ import factory from "./factory";
 class BooleanType {
     config: {
         optional?: boolean;
-    } = {};
-    type: boolean = true;
+    } = { };
     #validator?: Validator;
 
 
