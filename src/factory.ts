@@ -1,4 +1,4 @@
-import { ErrorMessage, Property, PrimitiveTypes, Validator, Variables } from "./types";
+import { ErrorMessage, Property, Type, Validator, Variables } from "./types";
 
 
 const error = (key: string, message: ErrorMessage, property?: Property, value?: any) => {
@@ -9,13 +9,34 @@ const error = (key: string, message: ErrorMessage, property?: Property, value?: 
     if (key.substring(0, Variables['input'].length) === Variables['input']) {
         key = key
             .substring(Variables['input'].length)
-            .replace(/]\[/g, ',');
+            .replace(/]\[/g, " + '/' + ")
+            .replace(/[\]\[]/g, '')
+            .replace(/'\s\+\s'/g, '');
     }
 
-    return `${Variables['errors']}.push({ message: '${message}', path: ${key || '[]'} });`;
+    return `
+        ${Variables['errors']}.push({
+            message: '${message}',
+            path: ${key || '"root"'}
+        });
+    `;
 };
 
-const init = (obj: string, property?: Property) => {
+const validator = (type: Type<any>) => {
+    return new Function(Variables['input'], `
+        let ${Variables['errors']} = [];
+
+        ${type.compile(Variables['input'])}
+
+        return {
+            data: ${Variables['errors']}.length ? undefined : ${Variables['input']},
+            errors: ${Variables['errors']},
+            messages: {}
+        };
+    `) as Validator;
+};
+
+const variables = (obj: string, property?: Property) => {
     let code = '',
         variable = obj;
 
@@ -34,17 +55,5 @@ const init = (obj: string, property?: Property) => {
     return [code, variable];
 };
 
-const validator = (type: PrimitiveTypes): Validator => {
-    type.config = Object.freeze(type.config);
 
-    return new Function(Variables['input'], `
-        let errors = [];
-
-        ${type.compile(Variables['input'])}
-
-        return { data: ${Variables['input']}, errors, messages: {} };
-    `) as Validator;
-};
-
-
-export default { error, init, validator };
+export default { error, validator, variables };

@@ -1,25 +1,24 @@
-import { ErrorMessage, Property, Validator } from "./types";
-import factory from "./factory";
+import { ErrorMessage, Property, Type } from "~/types";
+import factory from "~/factory";
 
 
-class NumberType {
+class NumberType extends Type<number> {
     config: {
         max?: number;
         min?: number;
         optional?: boolean;
         type: string
     };
-    errors: Record<string, ErrorMessage> = {};
-    #validator?: Validator;
 
 
     constructor(type: string) {
+        super();
         this.config = { type };
     }
 
 
     compile(obj: string, property?: Property) {
-        let [code, variable] = factory.init(obj, property);
+        let [code, variable] = factory.variables(obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -66,24 +65,6 @@ class NumberType {
         this.errors.min = error;
 
         return this;
-    }
-
-    optional(): this {
-        this.config.optional = true;
-
-        return this;
-    }
-
-    validate(data: any) {
-        return this.validator(data);
-    }
-
-    get validator() {
-        if (!this.#validator) {
-            this.#validator = factory.validator(this);
-        }
-
-        return this.#validator;
     }
 }
 

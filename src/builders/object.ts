@@ -1,22 +1,22 @@
-import { Property, PrimitiveTypes, Validator, Variables } from './types';
-import factory from './factory';
+import { ObjectShape, Property, Type, Variables } from "~/types";
+import factory from "~/factory";
 
 
-class ObjectType {
+class ObjectType<T extends ObjectShape> extends Type<never> {
     config: {
-        items: Record<string, PrimitiveTypes>;
+        items: T;
         optional?: boolean;
     };
-    #validator?: Validator;
 
 
-    constructor(items: ObjectType['config']['items'] = {}) {
+    constructor(items: T) {
+        super();
         this.config = { items };
     }
 
 
     compile(obj: string, property?: Property) {
-        let [code, variable] = factory.init(obj, property);
+        let [code, variable] = factory.variables(obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -30,19 +30,19 @@ class ObjectType {
 
             code += `else {`;
                 for (let key in this.config.items) {
-                    code += this.config.items[key].compile(variable, key);
+                    code += this.config.items[key].compile(`${variable}`, key);
                 }
 
                 code += `
                     if (${Variables['errors']}.length === 0) {
                         let whitelist = ['${Object.keys(this.config.items).join("','")}'];
 
-                        for (let key in ${obj}) {
+                        for (let key in ${variable}) {
                             if (whitelist.includes(key)) {
                                 continue;
                             }
 
-                            delete ${obj}[key];
+                            delete ${variable}[key];
                         }
                     }
                 `;
@@ -54,26 +54,8 @@ class ObjectType {
 
         return code;
     }
-
-    optional(): this {
-        this.config.optional = true;
-
-        return this;
-    }
-
-    validate(data: any) {
-        return this.validator(data);
-    }
-
-    get validator() {
-        if (!this.#validator) {
-            this.#validator = factory.validator(this);
-        }
-
-        return this.#validator;
-    }
 }
 
 
-export default (items: ObjectType['config']['items'] = {}) => new ObjectType(items);
+export default <T extends ObjectShape>(items: T) => new ObjectType(items);
 export { ObjectType };

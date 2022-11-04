@@ -1,19 +1,17 @@
-import { ErrorMessage, Property, Validator } from "./types";
-import factory from "./factory";
+import { ErrorMessage, Property, Type } from "~/types";
+import factory from "~/factory";
 
 
-class StringType {
+class StringType extends Type<string> {
     config: {
         max?: number;
         min?: number;
         optional?: boolean;
-    } = { };
-    errors: Record<string, ErrorMessage> = {};
-    #validator?: Validator;
+    } = {};
 
 
     compile(obj: string, property?: Property) {
-        let [code, variable] = factory.init(obj, property);
+        let [code, variable] = factory.variables(obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -48,36 +46,18 @@ class StringType {
         return code;
     }
 
-    max(number: number, error: ErrorMessage = (_: Property | undefined, max: number) => `must be less than ${max} characters`): this {
+    max(number: number, error: ErrorMessage = (_: Property | undefined, max: number) => `must be less than ${max} characters`) {
         this.config.max = number;
         this.errors.max = error;
 
         return this;
     }
 
-    min(number: number, error: ErrorMessage = (_: Property | undefined, min: number) => `must be at least ${min} characters`): this {
+    min(number: number, error: ErrorMessage = (_: Property | undefined, min: number) => `must be at least ${min} characters`) {
         this.config.min = number;
         this.errors.min = error;
 
         return this;
-    }
-
-    optional(): this {
-        this.config.optional = true;
-
-        return this;
-    }
-
-    validate(data: any) {
-        return this.validator(data);
-    }
-
-    get validator() {
-        if (!this.#validator) {
-            this.#validator = factory.validator(this);
-        }
-
-        return this.#validator;
     }
 }
 

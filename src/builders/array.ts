@@ -1,25 +1,24 @@
-import { ErrorMessage, Property, PrimitiveTypes, Variables, Validator } from './types';
-import factory from './factory';
+import { ArrayShape, ErrorMessage, Property, Variables, Type } from '~/types';
+import factory from '~/factory';
 
 
-class ArrayType {
+class ArrayType<T extends ArrayShape> extends Type<never> {
     config: {
-        items: PrimitiveTypes[];
+        items: T;
         max?: number;
         min?: number;
         optional?: boolean;
     };
-    errors: Record<string, ErrorMessage> = {};
-    #validator?: Validator;
 
 
-    constructor(items: ArrayType['config']['items']) {
+    constructor(items: T) {
+        super();
         this.config = { items };
     }
 
 
     compile(obj: string, property?: Property) {
-        let [code, variable] = factory.init(obj, property);
+        let [code, variable] = factory.variables(obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -47,20 +46,15 @@ class ArrayType {
                 `;
             }
 
-            if (this.config.items) {
-                code += 'else {';
+            let n = this.config.items.length;
 
-                if (this.config.items.length > 1) {
-                    for (let i = 0, n = this.config.items.length; i < n; i++) {
-                        code += this.config.items[i].compile(variable, i);
-                    }
-                }
-                else {
+            code += 'else {';
+                if (n === 1) {
                     code += `
                         let length = ${Variables['errors']}.length;
 
                         for (let i = 0, n = ${variable}.length; i < n; i++) {
-                            ${this.config.items[0].compile(variable, { dynamic: 'i' })}
+                            ${this.config.items[0].compile(`${variable}`, { dynamic: 'i' })}
 
                             if (${Variables['errors']}.length > length) {
                                 break;
@@ -68,9 +62,12 @@ class ArrayType {
                         }
                     `;
                 }
-
-                code += '}';
-            }
+                else if (n > 1) {
+                    for (let i = 0; i < n; i++) {
+                        code += this.config.items[i].compile(`${variable}`, i);
+                    }
+                }
+            code += '}';
 
         if (this.config.optional) {
             code += `}`;
@@ -92,26 +89,8 @@ class ArrayType {
 
         return this;
     }
-
-    optional(): this {
-        this.config.optional = true;
-
-        return this;
-    }
-
-    validate(data: any) {
-        return this.validator(data);
-    }
-
-    get validator() {
-        if (!this.#validator) {
-            this.#validator = factory.validator(this);
-        }
-
-        return this.#validator;
-    }
 }
 
 
-export default (...items: ArrayType['config']['items']) => new ArrayType(items);
+export default <T extends ArrayShape>(...items: T) => new ArrayType(items);
 export { ArrayType };
