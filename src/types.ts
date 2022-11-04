@@ -3,7 +3,7 @@ import { BooleanType } from "./builders/boolean";
 import { NumberType } from "./builders/number";
 import { ObjectType } from "./builders/object";
 import { StringType } from "./builders/string";
-import compile from "./factory";
+import factory from "./factory";
 
 
 abstract class Type<T> {
@@ -26,13 +26,9 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate(data: any) {
-        return this.validator(data);
-    }
-
     get validator() {
         if (!this.#validator) {
-            this.#validator = compile.validator(this);
+            this.#validator = factory.validator(this);
         }
 
         return this.#validator;
@@ -114,7 +110,7 @@ type Validator = <T>(data: unknown) => {
     // Validation errors
     errors: { message: string, path: (string | number)[] }[];
     // Messages displayed through UI
-    messages: {};
+    messages: Record<string, any>;
 };
 
 type ValuesOf<T> = T[keyof T][];
