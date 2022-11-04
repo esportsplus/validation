@@ -26,12 +26,14 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    get validator() {
-        if (!this.#validator) {
-            this.#validator = factory.validator(this);
-        }
+    validator<T>() {
+        return (data: any) => {
+            if (!this.#validator) {
+                this.#validator = factory.validator(this);
+            }
 
-        return this.#validator;
+            return this.#validator<T>(data);
+        };
     }
 }
 
