@@ -106,9 +106,9 @@ type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 type Types = ArrayType<ArrayShape> | BooleanType | NumberType | ObjectType<ObjectShape> | OptionalType<Types> | StringType | Type<any>;
 
 type Validator = <T>(data: unknown) => {
-    data?: T;
+    data: T;
     // Validation errors
-    errors: { message: string, path: (string | number)[] }[];
+    errors?: { message: string, path: (string | number)[] }[];
     // Messages displayed through UI
     messages: Record<string, any>;
 };

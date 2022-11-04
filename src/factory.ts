@@ -29,8 +29,8 @@ const validator = (type: Type<any>) => {
         ${type.compile(Variables['input'])}
 
         return {
-            data: ${Variables['errors']}.length ? undefined : ${Variables['input']},
-            errors: ${Variables['errors']},
+            data: ${Variables['input']},
+            errors: ${Variables['errors']}.length ? ${Variables['errors']} : undefined,
             messages: {}
         };
     `) as Validator;
