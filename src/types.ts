@@ -59,15 +59,7 @@ type Property = number | string | { dynamic: string };
 
 type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 
-type Validate = <T>(data: unknown, factories: Factory[]) => Promise<{
-    data: T;
-    // Validation errors
-    errors?: { message: string, path: (string | number) }[];
-    // Messages displayed through UI
-    messages: Record<string, any>;
-}>;
-
 type ValuesOf<T> = T[keyof T][];
 
 
-export { ArrayShape, Infer, ErrorMessage, Factory, ObjectShape, Property, Validate, Variables };
+export { ArrayShape, Infer, ErrorMessage, Factory, ObjectShape, Property, Variables };

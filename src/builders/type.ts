@@ -1,4 +1,4 @@
-import { Factory, Property } from '../types';
+import { Factory, Infer, Property } from '../types';
 import Validator from '../validator';
 
 
@@ -28,16 +28,18 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate<T>(data: any): ReturnType<Validator['validate']> {
+    validate<I = Infer< typeof this >>(data: any): Promise<{
+        data: I;
+        // Validation errors
+        errors?: { message: string, path: (string | number) }[];
+        // Messages displayed through UI
+        messages: Record<string, any>;
+    }> {
         if (!this.#validator) {
             this.#validator = new Validator(this);
         }
 
-        return this.#validator.validate<T>(data, this.#validator.factories);
-    }
-
-    validator<T>() {
-        return (data: any) => this.validate<T>(data);
+        return this.#validator.validate(data, this.#validator.factories);
     }
 }
 

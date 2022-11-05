@@ -1,4 +1,4 @@
-import { ErrorMessage, Factory, Property, Validate, Variables } from "./types";
+import { ErrorMessage, Factory, Property, Variables } from "./types";
 import { Type } from './builders/type';
 
 
@@ -7,7 +7,7 @@ let AsyncFunction = Object.getPrototypeOf(async function(){ }).constructor;
 
 class Validator {
     factories: Factory[] = [];
-    validate: Validate;
+    validate;
 
 
     constructor(type: Type<unknown>) {
@@ -21,7 +21,7 @@ class Validator {
                 errors: ${Variables['errors']}.length ? ${Variables['errors']} : undefined,
                 messages: {}
             };
-        `) as Validate;
+        `);
     }
 
 
