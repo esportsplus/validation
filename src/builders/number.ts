@@ -1,10 +1,11 @@
 import { ErrorMessage, Property } from "~/types";
 import { Type } from './type';
-import factory from "~/factory";
+import Validator from "~/validator";
 
 
 class NumberType extends Type<number> {
     config: {
+        errors: Record<string, ErrorMessage>;
         max?: number;
         min?: number;
         optional?: boolean;
@@ -22,8 +23,8 @@ class NumberType extends Type<number> {
         return new NumberType(this.config);
     }
 
-    compile(obj: string, property?: Property) {
-        let [code, variable] = factory.variables(obj, property);
+    compile(instance: Validator, obj: string, property?: Property) {
+        let [code, index, variable] = instance.variables(this, obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -31,14 +32,14 @@ class NumberType extends Type<number> {
 
             code += `
                 if (typeof ${variable} !== 'number' ${this.config.type === 'integer' ? `|| ${variable} % 1 !== 0` : ''}) {
-                    ${factory.error(variable, `must be a ${this.config.type === 'integer' ? `integer` : 'number'}`)}
+                    ${instance.error(index, variable, `must be a ${this.config.type === 'integer' ? `integer` : 'number'}`)}
                 }
             `;
 
             if (this.config.max !== undefined) {
                 code += `
                     else if(${variable} > ${this.config.max}) {
-                        ${factory.error(variable, this.errors.max, property, this.config.max)}
+                        ${instance.error(index, variable, this.config.errors.max, property, this.config.max)}
                     }
                 `;
             }
@@ -46,7 +47,7 @@ class NumberType extends Type<number> {
             if (this.config.min !== undefined) {
                 code += `
                     else if(${variable} < ${this.config.min}) {
-                        ${factory.error(variable, this.errors.min, property, this.config.min)}
+                        ${instance.error(index, variable, this.config.errors.min, property, this.config.min)}
                     }
                 `;
             }
@@ -58,25 +59,25 @@ class NumberType extends Type<number> {
         return code;
     }
 
-    max(number: number, error: ErrorMessage = (_: Property | undefined, max: number) => `must be less than ${max}`): this {
+    max(number: number, error: ErrorMessage = (_, max) => `must be less than ${max}`): this {
+        this.config.errors.max = error;
         this.config.max = number;
-        this.errors.max = error;
 
         return this;
     }
 
-    min(number: number, error: ErrorMessage = (_: Property | undefined, min: number) => `must be greater than ${min}`): this {
+    min(number: number, error: ErrorMessage = (_, min) => `must be greater than ${min}`): this {
+        this.config.errors.min = error;
         this.config.min = number;
-        this.errors.min = error;
 
         return this;
     }
 }
 
 
-const float = () => new NumberType({ type: 'float' });
-const integer = () => new NumberType({ type: 'integer' });
-const number = () => new NumberType({ type: 'number' });
+const float = () => new NumberType({ errors: {}, type: 'float' });
+const integer = () => new NumberType({ errors: {}, type: 'integer' });
+const number = () => new NumberType({ errors: {}, type: 'number' });
 
 
 export { float, integer, number, NumberType };

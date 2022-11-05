@@ -1,6 +1,6 @@
 import { Property } from "~/types";
 import { Type } from './type';
-import factory from "~/factory";
+import Validator from "~/validator";
 
 
 class BooleanType extends Type<boolean> {
@@ -11,12 +11,12 @@ class BooleanType extends Type<boolean> {
     }
 
 
-    clone() {
-        return new BooleanType(this.config);
-    }
+    // clone() {
+    //     return new BooleanType(this.config);
+    // }
 
-    compile(obj: string, property?: Property) {
-        let [code, variable] = factory.variables(obj, property);
+    compile(instance: Validator, obj: string, property?: Property) {
+        let [code, index, variable] = instance.variables(this, obj, property);
 
         if (this.config.optional) {
             code += `if (${variable} !== undefined) {`;
@@ -24,7 +24,7 @@ class BooleanType extends Type<boolean> {
 
             code += `
                 if (typeof ${variable} !== 'boolean') {
-                    ${factory.error(variable, `must be true or false`)}
+                    ${instance.error(index, variable, `must be true or false`)}
                 }
             `;
 

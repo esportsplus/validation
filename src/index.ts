@@ -1,5 +1,2 @@
-import { Infer } from "./types";
-
-
+export { Infer } from "./types";
 export * from "./builders";
-export { Infer };

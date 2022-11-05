@@ -5,18 +5,21 @@ import { OptionalType, Type } from './builders/type';
 
 enum Variables {
         errors = 'e',
+        factory = 'f',
         input = '_'
     };
 
 
 type ArrayShape = Type<unknown>[];
 
-type ErrorMessage = unknown;
+type ErrorMessage = ((property: Property | undefined, value: unknown) => string) | string;
 
 type Eval<T> =
     T extends any[] | unknown
         ? T
         : Flat<T>;
+
+type Factory = () => Promise<any>;
 
 type Flat<T> =
     T extends {}
@@ -56,15 +59,15 @@ type Property = number | string | { dynamic: string };
 
 type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 
-type Validator = <T>(data: unknown) => {
+type Validate = <T>(data: unknown, factories: Factory[]) => Promise<{
     data: T;
     // Validation errors
     errors?: { message: string, path: (string | number) }[];
     // Messages displayed through UI
     messages: Record<string, any>;
-};
+}>;
 
 type ValuesOf<T> = T[keyof T][];
 
 
-export { ArrayShape, Infer, ErrorMessage, ObjectShape, Property, Validator, Variables };
+export { ArrayShape, Infer, ErrorMessage, Factory, ObjectShape, Property, Validate, Variables };

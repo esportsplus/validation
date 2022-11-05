@@ -1,20 +1,23 @@
-import { ErrorMessage, Property, Validator } from '../types';
-import factory from '../factory';
+import { Factory, Property } from '../types';
+import Validator from '../validator';
 
 
 abstract class Type<T> {
     config: Record<string, any> = {};
-    errors: Record<string, ErrorMessage> = {};
     type?: T;
     #validator?: Validator;
 
 
-    clone(): Type<unknown> {
-        throw new Error('Implementation missing clone method');
+    // clone(): Type<unknown> {
+    //     throw new Error('Implementation missing clone method');
+    // }
+
+    compile(_: Validator, __: string, ___?: Property): string {
+        throw new Error('Implementation missing compile method');
     }
 
-    compile(_: string, __?: Property): string {
-        throw new Error('Implementation missing compile method');
+    fallback(fn: Factory) {
+        this.config.fallback = fn;
     }
 
     optional(): OptionalType<this> {
@@ -23,12 +26,12 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate<T>(data: any) {
+    validate<T>(data: any): ReturnType<Validator['validate']> {
         if (!this.#validator) {
-            this.#validator = factory.validator(this);
+            this.#validator = new Validator(this);
         }
 
-        return this.#validator<T>(data);
+        return this.#validator.validate<T>(data, this.#validator.factories);
     }
 
     validator<T>() {
@@ -46,12 +49,16 @@ class OptionalType<T extends Type<unknown>> extends Type<T> {
     }
 
 
-    clone(): Type<unknown> {
-        return new OptionalType( this.type.clone() );
+    // clone(): Type<unknown> {
+    //     return new OptionalType( this.type.clone() );
+    // }
+
+    compile(instance: Validator, obj: string, property?: Property) {
+        return this.type.compile(instance, obj, property);
     }
 
-    compile(obj: string, property?: Property) {
-        return this.type.compile(obj, property);
+    fallback(fn: Factory) {
+        this.type.fallback(fn);
     }
 
     required() {
