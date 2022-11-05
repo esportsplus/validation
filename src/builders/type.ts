@@ -18,6 +18,8 @@ abstract class Type<T> {
 
     fallback(fn: Factory) {
         this.config.fallback = fn;
+
+        return this;
     }
 
     optional(): OptionalType<this> {
@@ -59,6 +61,8 @@ class OptionalType<T extends Type<unknown>> extends Type<T> {
 
     fallback(fn: Factory) {
         this.type.fallback(fn);
+
+        return this;
     }
 
     required() {

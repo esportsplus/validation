@@ -19,7 +19,7 @@ type Eval<T> =
         ? T
         : Flat<T>;
 
-type Factory = () => Promise<any>;
+type Factory = () => (any | Promise<any>);
 
 type Flat<T> =
     T extends {}
