@@ -59,7 +59,7 @@ type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 type Validator = <T>(data: unknown) => {
     data: T;
     // Validation errors
-    errors?: { message: string, path: (string | number)[] }[];
+    errors?: { message: string, path: (string | number) }[];
     // Messages displayed through UI
     messages: Record<string, any>;
 };
