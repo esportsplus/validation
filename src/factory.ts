@@ -1,4 +1,5 @@
-import { ErrorMessage, Property, Type, Validator, Variables } from "./types";
+import { ErrorMessage, Property, Validator, Variables } from "./types";
+import { Type } from './builders/type';
 
 
 const error = (key: string, message: ErrorMessage, property?: Property, value?: any) => {

@@ -1,4 +1,5 @@
-import { ErrorMessage, Property, Type } from "~/types";
+import { ErrorMessage, Property } from "~/types";
+import { Type } from './type';
 import factory from "~/factory";
 
 
@@ -11,11 +12,15 @@ class NumberType extends Type<number> {
     };
 
 
-    constructor(type: string) {
+    constructor(config: NumberType['config']) {
         super();
-        this.config = { type };
+        this.config = config;
     }
 
+
+    clone() {
+        return new NumberType(this.config);
+    }
 
     compile(obj: string, property?: Property) {
         let [code, variable] = factory.variables(obj, property);
@@ -69,9 +74,9 @@ class NumberType extends Type<number> {
 }
 
 
-const float = () => new NumberType('float');
-const integer = () => new NumberType('integer');
-const number = () => new NumberType('number');
+const float = () => new NumberType({ type: 'float' });
+const integer = () => new NumberType({ type: 'integer' });
+const number = () => new NumberType({ type: 'number' });
 
 
 export { float, integer, number, NumberType };

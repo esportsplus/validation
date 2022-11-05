@@ -1,4 +1,5 @@
-import { ErrorMessage, Property, Type } from "~/types";
+import { ErrorMessage, Property } from "~/types";
+import { Type } from './type';
 import factory from "~/factory";
 
 
@@ -7,8 +8,18 @@ class StringType extends Type<string> {
         max?: number;
         min?: number;
         optional?: boolean;
-    } = {};
+    };
 
+
+    constructor(config: StringType['config'] = {}) {
+        super();
+        this.config = config;
+    }
+
+
+    clone() {
+        return new StringType(this.config);
+    }
 
     compile(obj: string, property?: Property) {
         let [code, variable] = factory.variables(obj, property);

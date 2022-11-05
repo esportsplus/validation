@@ -1,4 +1,5 @@
-import { ObjectShape, Property, Type, Variables } from "~/types";
+import { ObjectShape, Property, Variables } from "~/types";
+import { Type } from './type';
 import factory from "~/factory";
 
 
@@ -9,11 +10,15 @@ class ObjectType<T extends ObjectShape> extends Type<never> {
     };
 
 
-    constructor(items: T) {
+    constructor(config: ObjectType<T>['config']) {
         super();
-        this.config = { items };
+        this.config = config;
     }
 
+
+    clone() {
+        return this.only(...Object.keys(this.config.items));
+    }
 
     compile(obj: string, property?: Property) {
         let [code, variable] = factory.variables(obj, property);
@@ -54,8 +59,37 @@ class ObjectType<T extends ObjectShape> extends Type<never> {
 
         return code;
     }
+
+    except(...keys: string[]) {
+        let only = Object.keys(this.config.items);
+
+        for (let key in keys) {
+            let index = only.indexOf(key);
+
+            if (index === -1) {
+                continue;
+            }
+
+            only.splice(index, 1);
+        }
+
+        return this.only(...only);
+    }
+
+    only(...keys: string[]) {
+        let items: ObjectShape = {};
+
+        for (let key in keys) {
+            items[key] = this.config.items[key].clone();
+        }
+
+        return new ObjectType({
+            items,
+            optional: this.config.optional
+        });
+    }
 }
 
 
-export default <T extends ObjectShape>(items: T) => new ObjectType(items);
+export default <T extends ObjectShape>(items: T) => new ObjectType({ items });
 export { ObjectType };

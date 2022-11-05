@@ -1,4 +1,5 @@
-import { ArrayShape, ErrorMessage, Property, Variables, Type } from '~/types';
+import { ArrayShape, ErrorMessage, Property, Variables } from '~/types';
+import { Type } from './type';
 import factory from '~/factory';
 
 
@@ -11,11 +12,26 @@ class ArrayType<T extends ArrayShape> extends Type<never> {
     };
 
 
-    constructor(items: T) {
+    constructor(config: ArrayType<T>['config']) {
         super();
-        this.config = { items };
+        this.config = config;
     }
 
+
+    clone() {
+        let items: ArrayShape = [];
+
+        for (let i = 0, n = this.config.items.length; i < n; i++) {
+            items.push(this.config.items[i].clone());
+        }
+
+        return new ArrayType({
+            items,
+            max: this.config.max,
+            min: this.config.min,
+            optional: this.config.optional
+        });
+    }
 
     compile(obj: string, property?: Property) {
         let [code, variable] = factory.variables(obj, property);
@@ -92,5 +108,5 @@ class ArrayType<T extends ArrayShape> extends Type<never> {
 }
 
 
-export default <T extends ArrayShape>(...items: T) => new ArrayType(items);
+export default <T extends ArrayShape>(...items: T) => new ArrayType({ items });
 export { ArrayType };
