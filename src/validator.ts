@@ -27,7 +27,7 @@ class Validator {
 
     error(factory: number | undefined, key: string, message: ErrorMessage, property?: Property, value?: any) {
         if (factory) {
-            return `${key} = await ${Variables['factory'][factory]}();`;
+            return `${key} = await ${Variables['factory']}[${factory}]();`;
         }
 
         if (typeof message === 'function') {
