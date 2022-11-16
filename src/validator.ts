@@ -55,8 +55,8 @@ class Validator {
             index,
             variable = obj;
 
-        if (instance.config.factory) {
-            index = this.factories.push(instance.config.factory) - 1;
+        if (instance.config.fallback) {
+            index = this.factories.push(instance.config.fallback) - 1;
         }
 
         if (property !== undefined) {
