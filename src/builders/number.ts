@@ -19,9 +19,9 @@ class NumberType extends Type<number> {
     }
 
 
-    clone() {
-        return new NumberType(this.config);
-    }
+    // clone() {
+    //     return new NumberType(this.config);
+    // }
 
     compile(instance: Validator, obj: string, property?: Property) {
         let [code, index, variable] = instance.variables(this, obj, property);
