@@ -31,7 +31,7 @@ class NumberType extends Type<number> {
         }
 
             code += `
-                if (typeof ${variable} !== 'number' ${this.config.type === 'integer' ? `|| ${variable} % 1 !== 0` : ''}) {
+                if (( typeof ${variable} !== 'number' && isNaN(${variable} = +${variable}) ) ${this.config.type === 'integer' ? `|| ${variable} % 1 !== 0` : ''}) {
                     ${instance.error(index, variable, `must be a ${this.config.type === 'integer' ? `integer` : 'number'}`)}
                 }
             `;
