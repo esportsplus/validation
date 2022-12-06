@@ -18,8 +18,7 @@ class Validator {
 
             return {
                 data: ${Variables['input']},
-                errors: ${Variables['errors']}.length ? ${Variables['errors']} : undefined,
-                messages: {}
+                errors: ${Variables['errors']}.length ? ${Variables['errors']} : undefined
             };
         `);
     }

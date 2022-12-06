@@ -2,8 +2,8 @@
     "author": "ICJR",
     "description": "Data validation utility",
     "devDependencies": {
-        "tsc-alias": "^1.7.0",
-        "typescript": "^4.8.4"
+        "tsc-alias": "^1.8.1",
+        "typescript": "^4.9.3"
     },
     "main": "./build/index.js",
     "name": "@esportsplus/validation",

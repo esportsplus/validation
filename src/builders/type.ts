@@ -3,9 +3,10 @@ import Validator from '../validator';
 
 
 abstract class Type<T> {
+    private validator?: Validator;
+
     config: Record<string, any> = {};
     type?: T;
-    #validator?: Validator;
 
 
     // clone(): Type<unknown> {
@@ -28,18 +29,16 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate<I = Infer< typeof this >>(data: any): Promise<{
+    validate<I = Infer<T>>(data: any): Promise<{
         data: I;
         // Validation errors
         errors?: { message: string, path: (string | number) }[];
-        // Messages displayed through UI
-        messages: Record<string, any>;
     }> {
-        if (!this.#validator) {
-            this.#validator = new Validator(this);
+        if (!this.validator) {
+            this.validator = new Validator(this);
         }
 
-        return this.#validator.validate(data, this.#validator.factories);
+        return this.validator.validate(data, this.validator.factories);
     }
 }
 
