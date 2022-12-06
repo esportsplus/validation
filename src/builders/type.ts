@@ -29,9 +29,8 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate<I = Infer<T>>(data: any): Promise<{
+    validate<I = Infer<this>>(data: any): Promise<{
         data: I;
-        // Validation errors
         errors?: { message: string, path: (string | number) }[];
     }> {
         if (!this.validator) {
