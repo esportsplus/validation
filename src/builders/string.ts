@@ -1,4 +1,4 @@
-import { ErrorMessage, Property } from "~/types";
+import { ErrorMessage, Property } from "./types";
 import { Type } from './type';
 import Validator from "~/validator";
 

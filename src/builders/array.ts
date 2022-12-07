@@ -1,4 +1,4 @@
-import { ArrayShape, ErrorMessage, Property, Variables } from '~/types';
+import { ArrayShape, ErrorMessage, Property, Variables } from './types';
 import { Type } from './type';
 import Validator from '~/validator';
 

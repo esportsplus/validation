@@ -1,4 +1,4 @@
-import { Factory, Infer, Property } from '../types';
+import { Factory, Infer, Property } from './types';
 import Validator from '../validator';
 
 

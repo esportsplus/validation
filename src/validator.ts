@@ -1,4 +1,4 @@
-import { ErrorMessage, Factory, Property, Variables } from "./types";
+import { ErrorMessage, Factory, Property, Variables } from "./builders/types";
 import { Type } from './builders/type';
 
 

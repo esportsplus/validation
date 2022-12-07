@@ -15,5 +15,10 @@
         "prepublishOnly": "npm run build"
     },
     "types": "./build/index.d.ts",
+    "typesVersions": {
+        "*": {
+            "types": ["build/types"]
+        }
+    },
     "version": "0.2.24"
 }
