@@ -36,7 +36,7 @@ class Validator {
         if (key.substring(0, Variables['input'].length) === Variables['input']) {
             key = key
                 .substring(Variables['input'].length)
-                .replace(/]\[/g, " + '/' + ")
+                .replace(/]\[/g, " + '.' + ")
                 .replace(/[\]\[]/g, '')
                 .replace(/'\s\+\s'/g, '');
         }
