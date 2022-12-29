@@ -1,3 +1,4 @@
+import { response, Response } from '@esportsplus/action';
 import { Factory, Infer, Property } from './types';
 import Validator from '../validator';
 
@@ -8,10 +9,6 @@ abstract class Type<T> {
     config: Record<string, any> = {};
     type?: T;
 
-
-    // clone(): Type<unknown> {
-    //     throw new Error('Implementation missing clone method');
-    // }
 
     compile(_: Validator, __: string, ___?: Property): string {
         throw new Error('Implementation missing compile method');
@@ -29,15 +26,14 @@ abstract class Type<T> {
         return new OptionalType(this);
     }
 
-    validate<I = Infer<this>>(data: I): Promise<{
-        data: typeof data;
-        errors?: { message: string, path: (string | number) }[];
-    }> {
+    async validate<I = Infer<this>>(input: I): Promise<Response<I>> {
         if (!this.validator) {
             this.validator = new Validator(this);
         }
 
-        return this.validator.validate(data, this.validator.factories);
+        let { data, errors } = await this.validator.validate(input, this.validator.factories);
+
+        return response(data, errors || []);
     }
 }
 
@@ -50,10 +46,6 @@ class OptionalType<T extends Type<unknown>> extends Type<T> {
         this.type = type;
     }
 
-
-    // clone(): Type<unknown> {
-    //     return new OptionalType( this.type.clone() );
-    // }
 
     compile(instance: Validator, obj: string, property?: Property) {
         return this.type.compile(instance, obj, property);

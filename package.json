@@ -1,5 +1,8 @@
 {
     "author": "ICJR",
+    "dependencies": {
+        "@esportsplus/action": "^0.0.23"
+    },
     "description": "Data validation utility",
     "devDependencies": {
         "tsc-alias": "^1.8.1",

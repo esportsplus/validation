@@ -18,10 +18,6 @@ class StringType extends Type<string> {
     }
 
 
-    // clone() {
-    //     return new StringType(this.config);
-    // }
-
     compile(instance: Validator, obj: string, property?: Property) {
         let [code, index, variable] = instance.variables(this, obj, property);
 

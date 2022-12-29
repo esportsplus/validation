@@ -16,10 +16,6 @@ class ObjectType<T extends ObjectShape> extends Type<never> {
     }
 
 
-    // clone() {
-    //     return this.only(...Object.keys(this.config.items));
-    // }
-
     compile(instance: Validator, obj: string, property?: Property) {
         let [code, index, variable] = instance.variables(this, obj, property);
 
@@ -59,40 +55,6 @@ class ObjectType<T extends ObjectShape> extends Type<never> {
 
         return code;
     }
-
-    // except(...keys: string[]) {
-    //     let only = Object.keys(this.config.items);
-
-    //     for (let key in keys) {
-    //         let index = only.indexOf(key);
-
-    //         if (index === -1) {
-    //             continue;
-    //         }
-
-    //         only.splice(index, 1);
-    //     }
-
-    //     return this.only(...only);
-    // }
-
-    // only(...keys: string[]) {
-    //     let config: Record<string, any> = { items: {} };
-
-    //     for (let key in keys) {
-    //         config.items[key] = this.config.items[key].clone();
-    //     }
-
-    //     for (let key in this.config) {
-    //         if (key === 'items') {
-    //             continue;
-    //         }
-
-    //         config[key] = this.config[key as keyof ObjectType<T>['config']];
-    //     }
-
-    //     return new ObjectType(config as ObjectType<T>['config']);
-    // }
 }
 
 

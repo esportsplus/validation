@@ -19,24 +19,6 @@ class ArrayType<T extends ArrayShape> extends Type<never> {
     }
 
 
-    // clone() {
-    //     let config: Record<string, any> = { items: [] };
-
-    //     for (let i = 0, n = this.config.items.length; i < n; i++) {
-    //         config.items.push(this.config.items[i].clone());
-    //     }
-
-    //     for (let key in this.config) {
-    //         if (key === 'items') {
-    //             continue;
-    //         }
-
-    //         config[key] = this.config[key as keyof ArrayType<T>['config']];
-    //     }
-
-    //     return new ArrayType(config as ArrayType<T>['config']);
-    // }
-
     compile(instance: Validator, obj: string, property?: Property) {
         let [code, index, variable] = instance.variables(this, obj, property);
 

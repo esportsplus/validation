@@ -3,9 +3,9 @@ import { Type } from './type';
 import Validator from "~/validator";
 
 
-class BooleanType extends Type<boolean> {
+class AnyType extends Type<unknown> {
 
-    constructor(config: BooleanType['config'] = {}) {
+    constructor(config: AnyType['config'] = {}) {
         super();
         this.config = config;
     }
@@ -19,13 +19,8 @@ class BooleanType extends Type<boolean> {
         }
 
             code += `
-                if (typeof ${variable} !== 'boolean') {
-                    if (['true', 'false', '0', '1'].includes( ${variable} = String(${variable}).toLowerCase() )) {
-                        ${variable} = ${variable} === 'true' || ${variable} === '1';
-                    }
-                    else {
-                        ${instance.error(index, variable, `must be true or false`)}
-                    }
+                if (${variable} === undefined) {
+                    ${instance.error(index, variable, `is required`)}
                 }
             `;
 
@@ -38,5 +33,5 @@ class BooleanType extends Type<boolean> {
 }
 
 
-export default () => new BooleanType();
-export { BooleanType }
+export default () => new AnyType();
+export { AnyType }
