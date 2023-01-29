@@ -62,4 +62,4 @@ type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 type ValuesOf<T> = T[keyof T][];
 
 
-export { ArrayShape, Infer, ErrorMessage, Factory, ObjectShape, Property, Variables };
+export { ArrayShape, Infer, ErrorMessage, Factory, ObjectShape, Property, Type, Variables };

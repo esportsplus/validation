@@ -1,5 +1,4 @@
-import { ErrorMessage, Factory, Property, Variables } from "./builders/types";
-import { Type } from './builders/type';
+import { ErrorMessage, Factory, Property, Type, Variables } from "./builders/types";
 
 
 let AsyncFunction = Object.getPrototypeOf(async function(){ }).constructor;
