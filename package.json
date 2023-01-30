@@ -1,17 +1,16 @@
 {
     "author": "ICJR",
-    "browser": "build/index.browser.js",
     "dependencies": {
-        "@esportsplus/action": "^0.0.34"
+        "@esportsplus/action": "^0.0.35"
     },
     "description": "Data validation utility",
     "devDependencies": {
-        "@esportsplus/webpack": "^0.0.79"
+        "@esportsplus/webpack": "^0.0.80"
     },
     "main": "build/index.js",
     "name": "@esportsplus/validation",
     "scripts": {
-        "build": "webpack",
+        "build": "tsc && tsc-alias",
         "-": "-",
         "prepare": "npm run build",
         "prepublishOnly": "npm run build"
