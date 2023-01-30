@@ -2,11 +2,11 @@
     "author": "ICJR",
     "browser": "build/index.browser.js",
     "dependencies": {
-        "@esportsplus/action": "^0.0.33"
+        "@esportsplus/action": "^0.0.34"
     },
     "description": "Data validation utility",
     "devDependencies": {
-        "@esportsplus/webpack": "^0.0.78"
+        "@esportsplus/webpack": "^0.0.79"
     },
     "main": "build/index.js",
     "name": "@esportsplus/validation",
