@@ -5,7 +5,7 @@
     },
     "description": "Data validation utility",
     "devDependencies": {
-        "@esportsplus/webpack": "^0.0.81"
+        "@esportsplus/rspack": "^0.0.15"
     },
     "main": "build/index.js",
     "name": "@esportsplus/validation",
