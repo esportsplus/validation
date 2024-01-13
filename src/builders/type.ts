@@ -1,4 +1,4 @@
-import { response, Response } from '@esportsplus/action';
+import response, { Response } from '@esportsplus/action';
 import { Factory, Infer, Property } from './types';
 import Validator from '../validator';
 

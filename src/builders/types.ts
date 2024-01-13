@@ -1,5 +1,5 @@
-import { ArrayType } from "./array";
-import { ObjectType } from "./object";
+import { ArrayType } from './array';
+import { ObjectType } from './object';
 import { OptionalType, Type } from './type';
 
 

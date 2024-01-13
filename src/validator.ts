@@ -48,7 +48,7 @@ class Validator {
         `;
     }
 
-    variables(instance: Type<unknown>, obj: string, property?: Property): [string , number | undefined , string ] {
+    variables(instance: Type<unknown>, obj: string, property?: Property): [string , number | undefined , string] {
         let code = '',
             index,
             variable = obj;

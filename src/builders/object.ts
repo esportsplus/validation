@@ -1,6 +1,6 @@
-import { ObjectShape, Property, Variables } from "./types";
+import { ObjectShape, Property, Variables } from './types';
 import { Type } from './type';
-import Validator from "~/validator";
+import Validator from '~/validator';
 
 
 class ObjectType<T extends ObjectShape> extends Type<never> {

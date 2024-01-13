@@ -1,6 +1,6 @@
-import { Property } from "./types";
+import { Property } from './types';
 import { Type } from './type';
-import Validator from "~/validator";
+import Validator from '~/validator';
 
 
 class AnyType extends Type<unknown> {
