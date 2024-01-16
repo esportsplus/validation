@@ -23,7 +23,7 @@ export default (number: number, error?: ErrorMessage): ErrorMethod => {
                 throw new Error(`Validation: '${type}' is not supported by 'min' statement`);
             }
 
-            return `${variable}${type === 'number' ? '' : '.length'} > ${number}`;
+            return `${variable}${type === 'number' ? '' : '.length'} < ${number}`;
         },
         error
     ];
