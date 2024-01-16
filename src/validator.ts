@@ -1,75 +1,97 @@
-import { ErrorMessage, Factory, Property, Type, Variables } from "./builders/types";
+import { VARIABLE_ERROR, VARIABLE_FUNCTIONS, VARIABLE_INPUT } from './constants';
+import { Catch, ErrorMessage, Finally, Property, Type } from './types';
 
 
-let AsyncFunction = Object.getPrototypeOf(async function(){ }).constructor;
+let AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
+
+
+function error(message: string, path: string) {
+    return `
+        ${VARIABLE_ERROR}.push({
+            message: \`${message}\`,
+            path: ${path || `'root'`}
+        });
+    `;
+}
 
 
 class Validator {
-    factories: Factory[] = [];
+    functions: (Catch<any> | Finally<any>)[] = [];
     validate;
 
 
-    constructor(type: Type<unknown>) {
-        this.validate = new AsyncFunction(Variables['input'], Variables['factory'], `
-            let ${Variables['errors']} = [];
+    constructor(type: Type<any>) {
+        this.validate = new AsyncFunction(VARIABLE_INPUT, VARIABLE_FUNCTIONS, `
+            let ${VARIABLE_ERROR} = [];
 
-            ${type.compile(this, Variables['input'])}
+            ${type.compile(this, VARIABLE_INPUT)}
 
             return {
-                data: ${Variables['input']},
-                errors: ${Variables['errors']}.length ? ${Variables['errors']} : undefined
+                data: ${VARIABLE_INPUT},
+                errors: ${VARIABLE_ERROR}.length ? ${VARIABLE_ERROR} : undefined
             };
         `);
     }
 
 
-    error(factory: number | undefined, key: string, message: ErrorMessage, property?: Property, value?: any) {
-        if (factory !== undefined) {
-            return `${key} = await ${Variables['factory']}[${factory}]();`;
+    error(index: number | undefined, message: ErrorMessage, path: string, type: string, property?: Property) {
+        if (index !== undefined) {
+            return `${path} = await ${VARIABLE_FUNCTIONS}[${index}]();`;
         }
 
         if (typeof message === 'function') {
-            message = message(property, value);
+            message = message(property, type);
         }
 
-        if (key.substring(0, Variables['input'].length) === Variables['input']) {
-            key = key
-                .substring(Variables['input'].length)
+        if (path.startsWith(VARIABLE_INPUT)) {
+            path = path
+                .substring(VARIABLE_INPUT.length)
                 .replace(/]\[/g, " + '.' + ")
-                .replace(/[\]\[]/g, '')
-                .replace(/'\s\+\s'/g, '');
+                .replace(/[\]\[]|'\s\+\s'/g, '');
         }
 
-        return `
-            ${Variables['errors']}.push({
-                message: '${message}',
-                path: ${key || '"root"'}
-            });
-        `;
+        return error(message, path);
     }
 
-    variables(instance: Type<unknown>, obj: string, property?: Property): [string , number | undefined , string] {
-        let code = '',
-            index,
-            variable = obj;
-
-        if (instance.config.fallback) {
-            index = this.factories.push(instance.config.fallback) - 1;
-        }
-
+    variables<T>(config: Type<T>['config'], path: string, property?: Property) {
         if (property !== undefined) {
             if (typeof property === 'number') {
-                variable += `[${property}]`;
+                path += `[${property}]`;
             }
             else if(typeof property === 'string') {
-                variable += `['${property}']`;
+                path += `['${property}']`;
             }
             else {
-                variable += `[${property.dynamic}]`;
+                path += `[${property.dynamic}]`;
             }
         }
 
-        return [code, index, variable];
+        let finale = '',
+            index: number | undefined;
+
+        if (config.catch) {
+            index = this.functions.push(config.catch) - 1;
+        }
+
+        if (config.finally) {
+            finale = `
+                ${path} = await ${VARIABLE_FUNCTIONS}[${this.functions.push(config.finally) - 1}](
+                    (message) => {
+                        ${error('message', path)}
+                    },
+                    ${path}
+                );
+            `;
+        }
+
+        return [
+            '',
+            (message: ErrorMessage, property?: Property) => {
+                return this.error(index, message, path, config.type, property);
+            },
+            finale,
+            path
+        ] as [string, (message: ErrorMessage, property?: Property, value?: any) => string, string, string];
     }
 }
 

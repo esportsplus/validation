@@ -1,2 +1,3 @@
 export * from './builders';
-export type { Infer } from './builders/types';
+export * from './methods';
+export type { Infer } from './types';

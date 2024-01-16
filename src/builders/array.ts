@@ -1,98 +1,63 @@
-import { ArrayShape, ErrorMessage, Property, Variables } from './types';
-import { Type } from './type';
-import Validator from '~/validator';
+import { VARIABLE_ERROR } from '~/constants';
+import { Property, Type, Validator } from '~/types';
+import compile from '~/compile';
 
 
-class ArrayType<T extends ArrayShape> extends Type<never> {
-    config: {
-        errors: Record<string, ErrorMessage>;
-        items: T;
-        max?: number;
-        min?: number;
-        optional?: boolean;
-    };
+class ArrayType<T extends Type<any>[]> extends Type<T> {
+    protected items: T;
 
 
-    constructor(config: ArrayType<T>['config']) {
-        super();
-        this.config = config;
+    constructor(items: T) {
+        super('array');
+        this.items = items;
     }
 
 
     compile(instance: Validator, obj: string, property?: Property) {
-        let [code, index, variable] = instance.variables(this, obj, property);
+        let [code, error, finale, variable] = instance.variables(this.config, obj, property);
 
-        if (this.config.optional) {
-            code += `if (${variable} !== undefined) {`;
-        }
+        code += `
+            if (!Array.isArray(${variable})) {
+                ${error('must be an array', variable)}
+            }
+            ${compile.errors(this.config, error, property, variable)}
+        `;
+
+        code += 'else {';
+            let n = this.items.length;
+
+            if (n === 1) {
+                code += `
+                    let length = ${VARIABLE_ERROR}.length;
+
+                    for (let i = 0, n = ${variable}.length; i < n; i++) {
+                        ${this.items[0].compile(instance, variable, { dynamic: 'i' })}
+
+                        if (${VARIABLE_ERROR}.length > length) {
+                            break;
+                        }
+                    }
+                `;
+            }
+            else if (n > 1) {
+                for (let i = 0; i < n; i++) {
+                    code += this.items[i].compile(instance, variable, i);
+                }
+            }
 
             code += `
-                if (!Array.isArray(${variable})) {
-                    ${instance.error(index, variable, `must be an array`)}
+                if (${VARIABLE_ERROR}.length === 0) {
+                    ${finale}
                 }
             `;
+        code += '}';
 
-            if (this.config.max !== undefined) {
-                code += `
-                    else if(${variable}.length > ${this.config.max}) {
-                        ${instance.error(index, variable, this.config.errors.max, property, this.config.max)}
-                    }
-                `;
-            }
-
-            if (this.config.min !== undefined) {
-                code += `
-                    else if(${variable}.length < ${this.config.min}) {
-                        ${instance.error(index, variable, this.config.errors.min, property, this.config.min)}
-                    }
-                `;
-            }
-
-            let n = this.config.items.length;
-
-            code += 'else {';
-                if (n === 1) {
-                    code += `
-                        let length = ${Variables['errors']}.length;
-
-                        for (let i = 0, n = ${variable}.length; i < n; i++) {
-                            ${this.config.items[0].compile(instance, `${variable}`, { dynamic: 'i' })}
-
-                            if (${Variables['errors']}.length > length) {
-                                break;
-                            }
-                        }
-                    `;
-                }
-                else if (n > 1) {
-                    for (let i = 0; i < n; i++) {
-                        code += this.config.items[i].compile(instance, `${variable}`, i);
-                    }
-                }
-            code += '}';
-
-        if (this.config.optional) {
-            code += `}`;
-        }
-
-        return code;
-    }
-
-    max(number: number, error: ErrorMessage = (_, max) => `must be less than ${max} items`): this {
-        this.config.errors.max = error;
-        this.config.max = number;
-
-        return this;
-    }
-
-    min(number: number, error: ErrorMessage = (_, min) => `must be greater than ${min} items`): this {
-        this.config.errors.min = error;
-        this.config.min = number;
-
-        return this;
+        return compile.optional(code, this.config.optional, variable);
     }
 }
 
 
-export default <T extends ArrayShape>(...items: T) => new ArrayType({ errors: {}, items });
+export default <T extends Type<any>[]>(...items: T) => {
+    return new ArrayType(items);
+};
 export { ArrayType };

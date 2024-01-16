@@ -1,29 +1,58 @@
 import response, { Response } from '@esportsplus/action';
-import { Factory, Infer, Property } from './types';
-import Validator from '../validator';
+import { Catch, ErrorMethod, Finally, Infer, Property, Validator } from '~/types';
 
 
 abstract class Type<T> {
-    private validator?: Validator;
+    protected config: {
+        catch?: Catch<T>;
+        errors?: ErrorMethod[],
+        finally?: Finally<T>;
+        optional?: boolean;
+        type: string;
+    };
+    protected validator?: Validator;
 
-    config: Record<string, any> = {};
-    type?: T;
 
-
-    compile(_: Validator, __: string, ___?: Property): string {
-        throw new Error('Implementation missing compile method');
+    constructor(type: string) {
+        this.config = { type };
     }
 
-    fallback(fn: Factory) {
-        this.config.fallback = fn;
+
+    catch(fn: Catch<T>) {
+        this.config.catch = fn;
 
         return this;
     }
 
-    optional(): OptionalType<this> {
+    compile(_: Validator, __: string, ___?: Property): string {
+        throw new Error('Validation: type implementation missing compile method');
+    }
+
+    finally(fn: Finally<T>) {
+        this.config.finally = fn;
+
+        return this;
+    }
+
+    optional() {
         this.config.optional = true;
 
         return new OptionalType(this);
+    }
+
+    then(...errors: ErrorMethod[]) {
+        if (!this.config.errors) {
+            this.config.errors = errors;
+        }
+        else {
+            let config = this.config.errors;
+
+            for (let i = 0, n = errors.length; i < n; i++) {
+                config.push(errors[i]);
+            }
+        }
+
+        return this;
     }
 
     async validate<I = Infer<this>>(input: I): Promise<Response<I>> {
@@ -31,34 +60,46 @@ abstract class Type<T> {
             this.validator = new Validator(this);
         }
 
-        let { data, errors } = await this.validator.validate(input, this.validator.factories);
+        let { data, errors } = await this.validator.validate(input, this.validator.functions);
 
         return response(data, errors || []);
     }
 }
 
-class OptionalType<T extends Type<unknown>> extends Type<T> {
-    type: T;
+class OptionalType<T extends Type<any>> extends Type<any> {
+    protected type: T;
 
 
     constructor(type: T) {
-        super();
+        super('optional');
         this.type = type;
     }
 
+
+    catch(fn: Catch<T extends Type<infer U> ? U : never>) {
+        this.type.catch(fn);
+
+        return this;
+    }
 
     compile(instance: Validator, obj: string, property?: Property) {
         return this.type.compile(instance, obj, property);
     }
 
-    fallback(fn: Factory) {
-        this.type.fallback(fn);
+    finally(fn: Finally<T extends Type<infer U> ? U : never>) {
+        this.type.finally(fn);
 
         return this;
     }
 
     required() {
         return this.type;
+    }
+
+    then(...errors: ErrorMethod[]) {
+        this.type.then(...errors);
+
+        return this;
     }
 }
 

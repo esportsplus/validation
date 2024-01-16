@@ -1,42 +1,40 @@
-import { Property } from './types';
-import { Type } from './type';
-import Validator from '~/validator';
+import { Property, Type, Validator } from '~/types';
+import compile from '~/compile';
 
 
 class BooleanType extends Type<boolean> {
 
-    constructor(config: BooleanType['config'] = {}) {
-        super();
-        this.config = config;
+    constructor() {
+        super('boolean');
     }
 
 
     compile(instance: Validator, obj: string, property?: Property) {
-        let [code, index, variable] = instance.variables(this, obj, property);
+        let [code, error, finale, variable] = instance.variables(this.config, obj, property);
 
-        if (this.config.optional) {
-            code += `if (${variable} !== undefined) {`;
-        }
+        code += `
+            if (typeof ${variable} !== 'boolean') {
+                ${variable} = String(${variable}).toLowerCase();
 
-            code += `
-                if (typeof ${variable} !== 'boolean') {
-                    if (['true', 'false', '0', '1'].includes( ${variable} = String(${variable}).toLowerCase() )) {
-                        ${variable} = ${variable} === 'true' || ${variable} === '1';
-                    }
-                    else {
-                        ${instance.error(index, variable, `must be true or false`)}
-                    }
+                if (${variable} === 'true' || ${variable} === 'false' || ${variable} === '0' || ${variable} === '1') {
+                    ${variable} = ${variable} === 'true' || ${variable} === '1';
                 }
-            `;
+                else {
+                    ${error('must be true or false')}
+                }
+            }
+            ${compile.errors(this.config, error, property, variable)}
+            else {
+                ${finale}
+            }
+        `;
 
-        if (this.config.optional) {
-            code += `}`;
-        }
-
-        return code;
+        return compile.optional(code, this.config.optional, variable);
     }
 }
 
 
-export default () => new BooleanType();
+export default () => {
+    return new BooleanType();
+};
 export { BooleanType }

@@ -1,37 +1,33 @@
-import { Property } from './types';
-import { Type } from './type';
-import Validator from '~/validator';
+import { Property, Type, Validator } from '~/types';
+import compile from '~/compile';
 
 
-class AnyType extends Type<unknown> {
+class AnyType extends Type<any> {
 
-    constructor(config: AnyType['config'] = {}) {
-        super();
-        this.config = config;
+    constructor() {
+        super('any');
     }
 
 
     compile(instance: Validator, obj: string, property?: Property) {
-        let [code, index, variable] = instance.variables(this, obj, property);
+        let [code, error, finale, variable] = instance.variables(this.config, obj, property);
 
-        if (this.config.optional) {
-            code += `if (${variable} !== undefined) {`;
-        }
+        code += `
+            if (${variable} === undefined) {
+                ${error('is required')}
+            }
+            ${compile.errors(this.config, error, property, variable)}
+            else {
+                ${finale}
+            }
+        `;
 
-            code += `
-                if (${variable} === undefined) {
-                    ${instance.error(index, variable, `is required`)}
-                }
-            `;
-
-        if (this.config.optional) {
-            code += `}`;
-        }
-
-        return code;
+        return compile.optional(code, this.config.optional, variable);
     }
 }
 
 
-export default () => new AnyType();
-export { AnyType }
+export default () => {
+    return new AnyType();
+};
+export { AnyType };
