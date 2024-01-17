@@ -17,10 +17,15 @@ class AnyType extends Type<any> {
                 ${error('is required')}
             }
             ${compile.errors(this.config, error, property, variable)}
-            else {
-                ${finale}
-            }
         `;
+
+        if (finale) {
+            code += `
+                else {
+                    ${finale}
+                }
+            `;
+        }
 
         return compile.optional(code, this.config.optional, variable);
     }

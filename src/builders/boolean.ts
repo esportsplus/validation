@@ -24,10 +24,15 @@ class BooleanType extends Type<boolean> {
                 }
             }
             ${compile.errors(this.config, error, property, variable)}
-            else {
-                ${finale}
-            }
         `;
+
+        if (finale) {
+            code += `
+                else {
+                    ${finale}
+                }
+            `;
+        }
 
         return compile.optional(code, this.config.optional, variable);
     }

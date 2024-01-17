@@ -45,11 +45,13 @@ class ArrayType<T extends Type<any>[]> extends Type<T> {
                 }
             }
 
-            code += `
-                if (${VARIABLE_ERROR}.length === 0) {
-                    ${finale}
-                }
-            `;
+            if (finale) {
+                code += `
+                    if (${VARIABLE_ERROR}.length === 0) {
+                        ${finale}
+                    }
+                `;
+            }
         code += '}';
 
         return compile.optional(code, this.config.optional, variable);

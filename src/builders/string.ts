@@ -17,10 +17,15 @@ class StringType extends Type<string> {
                 ${error(this.config.optional ? 'must be a string' : 'must be a non empty string')}
             }
             ${compile.errors(this.config, error, property, variable)}
-            else {
-                ${finale}
-            }
         `;
+
+        if (finale) {
+            code += `
+                else {
+                    ${finale}
+                }
+            `;
+        }
 
         return compile.optional(code, this.config.optional, variable);
     }

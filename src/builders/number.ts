@@ -18,10 +18,15 @@ class NumberType extends Type<number> {
                 ${error(`must be a ${this.config.type === 'integer' ? `integer` : 'number'}`)}
             }
             ${compile.errors(this.config, error, property, variable)}
-            else {
-                ${finale}
-            }
         `;
+
+        if (finale) {
+            code += `
+                else {
+                    ${finale}
+                }
+            `;
+        }
 
         return compile.optional(code, this.config.optional, variable);
     }
