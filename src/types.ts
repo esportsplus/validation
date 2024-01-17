@@ -14,7 +14,7 @@ type ErrorMethod = [
     ErrorMessage
 ];
 
-type Finally<T> = (data: InternalInfer<T>, error: ((message: string) => void)) => InternalInfer<T>;
+type Finally<T> = (data: InternalInfer<T>, error: ((message: string) => InternalInfer<T>)) => InternalInfer<T>;
 
 type Infer<T> =
     T extends ArrayType<infer U>

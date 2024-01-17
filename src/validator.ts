@@ -79,6 +79,7 @@ class Validator {
                     ${path},
                     (message) => {
                         ${error('message', path)}
+                        return ${path};
                     }
                 );
             `;
