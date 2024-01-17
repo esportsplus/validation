@@ -5,7 +5,7 @@ import { OptionalType, Type } from './builders/type';
 import Validator from './validator';
 
 
-type Catch<T> = () => (T | Promise<T>);
+type Catch<T> = () => (InternalInfer<T> | Promise<InternalInfer<T>>);
 
 type ErrorMessage = ((property: Property | undefined, type: string) => string) | string;
 
@@ -14,7 +14,7 @@ type ErrorMethod = [
     ErrorMessage
 ];
 
-type Finally<T> = (error: ((message: string) => void), value: T) => T;
+type Finally<T> = (data: InternalInfer<T>, error: ((message: string) => void)) => InternalInfer<T>;
 
 type Infer<T> =
     T extends ArrayType<infer U>
@@ -26,6 +26,15 @@ type Infer<T> =
                 : T extends Type<infer U>
                     ? U
                     : never;
+
+type InternalInfer<T> =
+    T extends Type<infer _>
+        ? Infer<T>
+        : T extends unknown[]
+            ? ValuesOf<Nested<T, number>>
+            : T extends Record<PropertyKey, unknown>
+                ? Nested<T, string>
+                : T;
 
 type Nested<T, U> =
     Prettify<

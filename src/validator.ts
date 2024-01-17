@@ -53,7 +53,7 @@ class Validator {
         return error(message, path);
     }
 
-    variables<T>(config: Type<T>['config'], path: string, property?: Property) {
+    variables(config: Type<any>['config'], path: string, property?: Property) {
         if (property !== undefined) {
             if (typeof property === 'number') {
                 path += `[${property}]`;
@@ -76,10 +76,10 @@ class Validator {
         if (config.finally) {
             finale = `
                 ${path} = await ${VARIABLE_FUNCTIONS}[${this.functions.push(config.finally) - 1}](
+                    ${path},
                     (message) => {
                         ${error('message', path)}
-                    },
-                    ${path}
+                    }
                 );
             `;
         }
@@ -91,7 +91,7 @@ class Validator {
             },
             finale,
             path
-        ] as [string, (message: ErrorMessage, property?: Property, value?: any) => string, string, string];
+        ] as [ string, ((message: ErrorMessage, property?: Property, value?: any) => string), string, string ];
     }
 }
 
