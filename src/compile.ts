@@ -17,7 +17,7 @@ const errors = <T>(
         let statement = config.errors[i];
 
         code += `
-            else if(${statement[0](config.type, variable)}) {
+            else if(${statement[0](config.type, variable)} === false) {
                 ${error(statement[1], property)}
             }
         `;

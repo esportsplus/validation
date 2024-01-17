@@ -10,7 +10,7 @@ export default (value: boolean | null | number | string | undefined, error?: Err
 
     return [
         (_: string, variable: string) => {
-            return `${variable} != ${escaped}`;
+            return `${variable} == ${escaped}`;
         },
         error || `must equal ${value}`
     ];
