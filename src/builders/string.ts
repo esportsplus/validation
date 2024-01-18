@@ -1,4 +1,5 @@
-import { Property, Type, Validator } from '~/types';
+import { Property, Type } from '~/types';
+import { Validator } from '~/validator';
 import compile from '~/compile';
 
 

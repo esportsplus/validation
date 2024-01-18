@@ -3,7 +3,6 @@ import { Prettify } from '@esportsplus/typescript';
 import { ArrayType } from './builders/array';
 import { ObjectType } from './builders/object';
 import { OptionalType, Type } from './builders/type';
-import Validator from './validator';
 
 
 type Catch<T> = () => (InternalInfer<T> | Promise<InternalInfer<T>>);
@@ -14,10 +13,6 @@ type ErrorMethod = [
     (type: string, variable: string) => string,
     ErrorMessage
 ];
-
-type ExternalValidator = {
-    validate<T>(data: T): Promise<Response<T>>;
-};
 
 type Finally<T> = (data: InternalInfer<T>, error: ((message: string) => InternalInfer<T>)) => InternalInfer<T>;
 
@@ -59,7 +54,11 @@ type Property = number | string | { dynamic: string };
 
 type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
 
+type Validator<T> = {
+    validate(data: T): Promise<Response<T>>;
+};
+
 type ValuesOf<T> = T[keyof T][];
 
 
-export { Catch, ErrorMessage, ErrorMethod, ExternalValidator, Finally, Infer, Property, Type, Validator };
+export { Catch, ErrorMessage, ErrorMethod, Finally, Infer, Property, Type, Validator };

@@ -1,5 +1,6 @@
 import response, { Response } from '@esportsplus/action';
-import { Catch, ErrorMethod, Finally, Infer, Property, Validator } from '~/types';
+import { Catch, ErrorMethod, Finally, Infer, Property } from '~/types';
+import { Validator } from '~/validator';
 
 
 abstract class Type<T> {
