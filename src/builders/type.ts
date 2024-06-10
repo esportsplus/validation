@@ -29,7 +29,13 @@ abstract class Type<T> {
         throw new Error('Validation: type implementation missing compile method');
     }
 
-    dispatcher(fn: (<U>(response: Response<T>) => U)) {
+    finally(fn: Finally<T>) {
+        this.config.finally = fn;
+
+        return this;
+    }
+
+    guard(fn: (<U>(response: Response<T>) => U)) {
         return async (input: T) => {
             let response = await this.validate(input);
 
@@ -39,12 +45,6 @@ abstract class Type<T> {
 
             return response;
         };
-    }
-
-    finally(fn: Finally<T>) {
-        this.config.finally = fn;
-
-        return this;
     }
 
     optional() {
