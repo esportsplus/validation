@@ -117,4 +117,4 @@ class OptionalType<T extends Type<any>> extends Type<any> {
 }
 
 
-export { OptionalType, Response, Type };
+export { OptionalType, Type };

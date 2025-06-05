@@ -1,21 +1,22 @@
 {
     "author": "ICJR",
     "dependencies": {
-        "@esportsplus/action": "^0.0.52"
+        "@esportsplus/action": "^0.0.54"
     },
     "description": "Data validation utility",
     "devDependencies": {
-        "@esportsplus/typescript": "^0.6.3"
+        "@esportsplus/typescript": "^0.8.11"
     },
     "main": "build/index.js",
     "name": "@esportsplus/validation",
     "scripts": {
         "build": "tsc && tsc-alias",
         "-": "-",
-        "prepare": "npm run build",
-        "prepublishOnly": "npm run build"
+        "prepare": "pnpm build",
+        "prepublishOnly": "pnpm build"
     },
     "sideEffects": false,
+    "type": "module",
     "types": "build/index.d.ts",
     "version": "0.3.11"
 }

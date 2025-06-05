@@ -61,4 +61,4 @@ type Validator<T> = {
 type ValuesOf<T> = T[keyof T][];
 
 
-export { Catch, ErrorMessage, ErrorMethod, Finally, Infer, Property, Type, Validator };
+export type { Catch, ErrorMessage, ErrorMethod, Finally, Infer, Property, Type, Validator };
