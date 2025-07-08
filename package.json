@@ -1,11 +1,12 @@
 {
     "author": "ICJR",
     "dependencies": {
-        "@esportsplus/action": "^0.0.54"
+        "@esportsplus/action": "^0.0.56",
+        "@esportsplus/utilities": "^0.9.1"
     },
     "description": "Data validation utility",
     "devDependencies": {
-        "@esportsplus/typescript": "^0.8.11"
+        "@esportsplus/typescript": "^0.9.1"
     },
     "main": "build/index.js",
     "name": "@esportsplus/validation",

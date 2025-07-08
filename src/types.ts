@@ -1,5 +1,5 @@
 import { Response } from '@esportsplus/action';
-import { Prettify } from '@esportsplus/typescript';
+import { Prettify } from '@esportsplus/utilities';
 import { ArrayType } from './builders/array';
 import { ObjectType } from './builders/object';
 import { OptionalType, Type } from './builders/type';
