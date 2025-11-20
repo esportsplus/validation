@@ -2,7 +2,7 @@
     "author": "ICJR",
     "dependencies": {
         "@esportsplus/action": "^0.0.58",
-        "@esportsplus/utilities": "^0.24.0"
+        "@esportsplus/utilities": "^0.25.0"
     },
     "description": "Data validation utility",
     "devDependencies": {
