@@ -10,6 +10,12 @@ interface ErrorType {
     push(message: string): void;
 }
 
+interface Validator {
+    build: <T, _TErrors extends ErrorMessages<T> = {}>(
+        _config?: ValidatorConfig<T>
+    ) => (input: unknown) => Promise<ValidationResult<T>>;
+}
+
 interface ValidationError {
     message: string;
     path: string;
@@ -44,6 +50,7 @@ export type {
     integer,
     ValidationError,
     ValidationResult,
+    Validator,
     ValidatorConfig,
     ValidatorFunction
 };
