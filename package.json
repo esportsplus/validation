@@ -1,23 +1,42 @@
 {
     "author": "ICJR",
     "dependencies": {
-        "@esportsplus/action": "^0.0.58",
-        "@esportsplus/utilities": "^0.25.0"
+        "@esportsplus/utilities": "^0.27.2",
+        "typescript": "^5.9.3"
     },
-    "description": "Data validation utility",
+    "description": "Compile-time data validation utility",
     "devDependencies": {
-        "@esportsplus/typescript": "^0.9.1"
+        "@esportsplus/typescript": "^0.10.2",
+        "@types/node": "^25.0.3",
+        "vite": "^7.3.0",
+        "vitest": "^4.0.16"
     },
+    "files": [
+        "build"
+    ],
     "main": "build/index.js",
     "name": "@esportsplus/validation",
+    "peerDependencies": {
+        "vite": ">=4.0.0"
+    },
+    "peerDependenciesMeta": {
+        "vite": {
+            "optional": false
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/esportsplus/validation"
+    },
     "scripts": {
-        "build": "tsc && tsc-alias",
         "-": "-",
+        "build": "tsc && tsc-alias",
         "prepare": "pnpm build",
-        "prepublishOnly": "pnpm build"
+        "prepublishOnly": "pnpm build",
+        "test": "vitest run"
     },
     "sideEffects": false,
     "type": "module",
     "types": "build/index.d.ts",
-    "version": "0.3.17"
+    "version": "1.0.0"
 }

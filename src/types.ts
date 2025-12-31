@@ -1,64 +1,49 @@
-import { Response } from '@esportsplus/action';
-import { Prettify } from '@esportsplus/utilities';
-import { ArrayType } from './builders/array';
-import { ObjectType } from './builders/object';
-import { OptionalType, Type } from './builders/type';
+import type { Brand } from '@esportsplus/utilities';
 
 
-type Catch<T> = () => (InternalInfer<T> | Promise<InternalInfer<T>>);
+type float = Brand<number, 'float'>;
 
-type ErrorMessage = ((property: Property | undefined, type: string) => string) | string;
+type integer = Brand<number, 'integer'>;
 
-type ErrorMethod = [
-    (type: string, variable: string) => string,
-    ErrorMessage
-];
 
-type Finally<T> = (data: InternalInfer<T>, error: ((message: string) => InternalInfer<T>)) => InternalInfer<T>;
+interface ErrorType {
+    push(message: string): void;
+}
 
-type Infer<T> =
-    T extends ArrayType<infer U>
-        ? ValuesOf<Nested<U, number>>
-        : T extends ObjectType<infer U>
-            ? Nested<U, string>
-            : T extends OptionalType<infer U>
-                ? Infer<U>
-                : T extends Type<infer U>
-                    ? U
-                    : never;
+interface ValidationError {
+    message: string;
+    path: string;
+}
 
-type InternalInfer<T> =
-    T extends Type<infer _>
-        ? Infer<T>
-        : T extends unknown[]
-            ? ValuesOf<Nested<T, number>>
-            : T extends Record<PropertyKey, unknown>
-                ? Nested<T, string>
-                : T;
-
-type Nested<T, U> =
-    Prettify<
-        { [K in OptionalKeys<T, U>]?: Infer<T[K]> }
-        &
-        { [K in RequiredKeys<T, U>]: Infer<T[K]> }
-    >;
-
-type OptionalKeys<T, U> =
-    {
-        [K in keyof T & U]: T[K] extends OptionalType<infer _>
-            ? K
-            : never;
-    }[keyof T & U];
-
-type Property = number | string | { dynamic: string };
-
-type RequiredKeys<T, U> = Exclude<U & keyof T, OptionalKeys<T, U>>;
-
-type Validator<T> = {
-    validate(data: T): Promise<Response<T>>;
+type ValidatorConfig<T> = {
+    [K in keyof T]?:
+        | ValidatorFunction<T[K]>
+        | ValidatorFunction<T[K]>[]
 };
 
-type ValuesOf<T> = T[keyof T][];
+type ValidatorFunction<T> = (value: T, errors: ErrorType) => void | Promise<void>;
+
+type ValidationResult<T> =
+    | { data: T; errors: undefined; ok: true }
+    | { data: unknown; errors: ValidationError[]; ok: false };
+
+type ErrorMessages<T> = {
+    [K in keyof T]?:
+        T[K] extends (infer U)[]
+            ? string | ErrorMessages<U>[]
+            : T[K] extends object
+                ? string | ErrorMessages<T[K]>
+                : string;
+};
 
 
-export type { Catch, ErrorMessage, ErrorMethod, Finally, Infer, Property, Type, Validator };
+export type {
+    ErrorMessages,
+    ErrorType,
+    float,
+    integer,
+    ValidationError,
+    ValidationResult,
+    ValidatorConfig,
+    ValidatorFunction
+};
